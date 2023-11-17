@@ -1,6 +1,8 @@
 package com.tericcabrel.authapi.services;
 
-import com.tericcabrel.authapi.dtos.equbtegna.RegisterEqubtegnaDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tericcabrel.authapi.dtos.RegisterDto;
+import com.tericcabrel.authapi.dtos.ResponseDto;
 import com.tericcabrel.authapi.dtos.equbtegna.ViewEqubtegnaDto;
 import com.tericcabrel.authapi.entities.equbtegna.Equbtegna;
 import com.tericcabrel.authapi.repositories.EqubtegnasRepository;
@@ -12,18 +14,30 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EqubtegnasService {
     private final EqubtegnasRepository equbtegnasRepository;
+    private final ObjectMapper objectMapper;
 
-    public ResponseEntity<Equbtegna> addEqubtegna(RegisterEqubtegnaDto registerEqubtegnaDto) {
-        return ResponseEntity.ok(equbtegnasRepository.save(Equbtegna.builder()
-                .fullName(registerEqubtegnaDto.getFullName())
-                .msisdn(registerEqubtegnaDto.getMsisdn())
-                .age(registerEqubtegnaDto.getAge())
-                .gender(registerEqubtegnaDto.getGender())
-                .build()));
+    public ResponseEntity<Equbtegna> addEqubtegna(RegisterDto registerDto) {
+        Equbtegna equbtegna = objectMapper.convertValue(registerDto.getPayload(), Equbtegna.class);
+        return ResponseEntity.ok(equbtegnasRepository.save(equbtegna));
 
     }
+    public ResponseEntity<ResponseDto> viewEqubtegna(ViewEqubtegnaDto viewEqubtegnaDto) {
+        return ResponseEntity.ok(
+                ResponseDto.builder()
+                        .requestRefID(viewEqubtegnaDto.getRequestRefID())
+                        .remark(viewEqubtegnaDto.getRemark())
+                        .payload(equbtegnasRepository.findByMsisdn(viewEqubtegnaDto.getIdentifier()))
+                        .build()
+        );
+    }
 
-    public ResponseEntity<Equbtegna> viewEqubtegna(ViewEqubtegnaDto viewEqubtegnaDto) {
-        return ResponseEntity.ok(equbtegnasRepository.findByMsisdn(viewEqubtegnaDto.getName()));
+    public ResponseEntity<ResponseDto> viewListEqubtegnas(ViewEqubtegnaDto viewEqubtegnaDto) {
+        return ResponseEntity.ok(
+                ResponseDto.builder()
+                        .requestRefID(viewEqubtegnaDto.getRequestRefID())
+                        .remark(viewEqubtegnaDto.getRemark())
+                        .payload(equbtegnasRepository.findAll())
+                        .build()
+        );
     }
 }

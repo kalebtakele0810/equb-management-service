@@ -1,5 +1,7 @@
 package com.tericcabrel.authapi.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tericcabrel.authapi.entities.identity.User;
 import com.tericcabrel.authapi.dtos.users.LoginUserDto;
 import com.tericcabrel.authapi.dtos.users.RegisterUserDto;
@@ -30,6 +32,11 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDto loginUserDto) {
+        try {
+            System.out.println(new ObjectMapper().writeValueAsString(loginUserDto));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         User authenticatedUser = authenticationService.authenticate(loginUserDto);
 
         String jwtToken = jwtService.generateToken(authenticatedUser);

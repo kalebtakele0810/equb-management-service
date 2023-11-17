@@ -2,7 +2,7 @@
 package com.tericcabrel.authapi.entities.equb;
 
 import com.tericcabrel.authapi.entities.equbtegna.Equbtegna;
-import com.tericcabrel.authapi.entities.payment.Payments;
+import com.tericcabrel.authapi.entities.identity.RoleEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,35 +14,30 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.util.Date;
 import java.util.List;
 
-@Table(name = "equbs")
+@Table(name = "equb_type")
 @Entity
 @Getter
 @Setter
 @SuperBuilder
 @NoArgsConstructor
-public class Equb {
+public class EqubType {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
     private Integer id;
+
     @Column(nullable = false)
-    private String type;
-    @Column(length = 100, nullable = false)
-    private String duration;
+    @Enumerated(EnumType.STRING)
+    private EqubTypeEnum name;
+
+    @Column(nullable = false)
+    private int numberOfDays;
+
     @Column(nullable = false)
     private String status;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "equb_id", referencedColumnName = "id", nullable = true)
-    private List<Equbtegna> equbtegnas;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "equb_id", referencedColumnName = "id", nullable = true)
-    private List<StartEqub> startEqubs;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "agreement_id", referencedColumnName = "id", nullable = false)
-    private EqubAgreement equbAgreement;
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "equb_id", referencedColumnName = "id", nullable = true)
-    private List<Payments> payments;
+    @JoinColumn(name = "equb_type_id", referencedColumnName = "id", nullable = true)
+    private List<Equb> equbs;
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")
     private Date createdAt;

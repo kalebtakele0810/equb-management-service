@@ -1,6 +1,7 @@
 package com.tericcabrel.authapi.controllers;
 
-import com.tericcabrel.authapi.dtos.equbtegna.RegisterEqubtegnaDto;
+import com.tericcabrel.authapi.dtos.RegisterDto;
+import com.tericcabrel.authapi.dtos.ResponseDto;
 import com.tericcabrel.authapi.dtos.equbtegna.ViewEqubtegnaDto;
 import com.tericcabrel.authapi.entities.equbtegna.Equbtegna;
 import com.tericcabrel.authapi.services.EqubtegnasService;
@@ -16,14 +17,20 @@ public class EqubtegnaController {
     private final EqubtegnasService equbtegnasService;
 
     @PostMapping("/add")
-    @PreAuthorize("hasRole(RoleEnum.USER)")
-    public ResponseEntity<Equbtegna> register(@RequestBody RegisterEqubtegnaDto registerEqubtegnaDto) {
-        return equbtegnasService.addEqubtegna(registerEqubtegnaDto);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Equbtegna> register(@RequestBody RegisterDto registerDto) {
+        return equbtegnasService.addEqubtegna(registerDto);
     }
 
     @PostMapping("/view")
     @PreAuthorize("hasRole(RoleEnum.USER)")
-    public ResponseEntity<Equbtegna> view(@RequestBody ViewEqubtegnaDto registerEqubtegnaDto) {
+    public ResponseEntity<ResponseDto> view(@RequestBody ViewEqubtegnaDto registerEqubtegnaDto) {
         return equbtegnasService.viewEqubtegna(registerEqubtegnaDto);
+    }
+
+    @PostMapping("/list")
+    @PreAuthorize("hasRole(RoleEnum.USER)")
+    public ResponseEntity<ResponseDto> list(@RequestBody ViewEqubtegnaDto registerEqubtegnaDto) {
+        return equbtegnasService.viewListEqubtegnas(registerEqubtegnaDto);
     }
 }

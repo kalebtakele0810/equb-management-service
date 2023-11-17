@@ -1,8 +1,7 @@
-
 package com.tericcabrel.authapi.entities.equbtegna;
 
-import com.tericcabrel.authapi.entities.equb.Equb;
-import com.tericcabrel.authapi.entities.identity.Role;
+import com.tericcabrel.authapi.entities.equb.StartEqub;
+import com.tericcabrel.authapi.entities.payment.Payments;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "equbtegnas")
 @Entity
@@ -24,23 +24,29 @@ public class Equbtegna {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
     private Integer id;
-
     @Column(nullable = false)
-    private String fullName;
-
-    @Column(unique = true, length = 100, nullable = false)
+    private String firstName;
+    @Column(nullable = false)
+    private String lastName;
+    @Column(unique = true, nullable = false)
     private String msisdn;
-
     @Column
     private int age;
-
-    @Column
-    private String gender;
-
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private GenderEnum gender;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "equbtegna_id", referencedColumnName = "id")
+    private List<StartEqub> startEqubs;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "equbtegna_id", referencedColumnName = "id")
+    private List<Payments> payments;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "account_id", referencedColumnName = "id", nullable = false)
+    private Account account;
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")
     private Date createdAt;
-
     @UpdateTimestamp
     @Column(name = "updated_at")
     private Date updatedAt;

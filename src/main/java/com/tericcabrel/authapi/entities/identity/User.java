@@ -23,41 +23,31 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
     private Integer id;
-
     @Column(nullable = false)
     private String fullName;
-
     @Column(unique = true, length = 100, nullable = false)
     private String email;
-
     @Column(nullable = false)
     private String password;
-
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")
     private Date createdAt;
-
     @UpdateTimestamp
     @Column(name = "updated_at")
     private Date updatedAt;
-
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
     private Role role;
-
     public Role getRole() {
         return role;
     }
-
     public User setRole(Role role) {
         this.role = role;
-
         return this;
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role.getName().toString());
-
         return List.of(authority);
     }
 
