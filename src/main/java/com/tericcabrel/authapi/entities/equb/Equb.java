@@ -26,28 +26,41 @@ public class Equb {
     @Column(nullable = false)
     private Integer id;
     @Column(nullable = false)
-    private String type;
-    @Column(length = 100, nullable = false)
-    private String duration;
+    private String name;
+    @Column(nullable = true)
+    private int amount;
+    @Column(nullable = true)
+    private int round;
+    @CreationTimestamp
+    private Date started_date;
+    @CreationTimestamp
+    private Date end_date;
     @Column(nullable = false)
     private String status;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "equb_id", referencedColumnName = "id", nullable = true)
     private List<Equbtegna> equbtegnas;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "equb_id", referencedColumnName = "id", nullable = true)
     private List<StartEqub> startEqubs;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "agreement_id", referencedColumnName = "id", nullable = false)
     private EqubAgreement equbAgreement;
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "equb_id", referencedColumnName = "id", nullable = true)
     private List<Payments> payments;
+
+    @ManyToOne(cascade = CascadeType.MERGE)
+    private EqubType equbType;
+    @ManyToOne(cascade = CascadeType.MERGE)
+    private EqubCategory equbCategory;
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")
     private Date createdAt;
     @UpdateTimestamp
-    @Column(name = "updated_at")
+    @Column(updatable = false, name = "updated_at")
     private Date updatedAt;
+
+
 }
 

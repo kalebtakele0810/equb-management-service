@@ -35,9 +35,9 @@ public class EqubType {
 
     @Column(nullable = false)
     private String status;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+   /* @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "equb_type_id", referencedColumnName = "id", nullable = true)
-    private List<Equb> equbs;
+    private List<Equb> equbs;*/
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")
     private Date createdAt;

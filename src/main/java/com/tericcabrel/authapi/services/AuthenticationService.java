@@ -26,17 +26,21 @@ public class AuthenticationService {
     private final RoleRepository roleRepository;
     public User signup(RegisterUserDto input) {
 
-        Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
+       /* Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
 
         if (optionalRole.isEmpty()) {
             return null;
-        }
+        }*/
 
+        Role role=new Role();
+        role.setName(RoleEnum.USER);
+        role.setDescription("USER");
         var user = new User()
                 .setFullName(input.getFullName())
                 .setEmail(input.getEmail())
                 .setPassword(passwordEncoder.encode(input.getPassword()))
-                .setRole(optionalRole.get());
+//                .setRole(optionalRole.get());
+                .setRole(role);
 
         return userRepository.save(user);
     }

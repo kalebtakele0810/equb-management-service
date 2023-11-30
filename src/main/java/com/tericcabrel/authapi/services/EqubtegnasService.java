@@ -18,6 +18,7 @@ public class EqubtegnasService {
 
     public ResponseEntity<Equbtegna> addEqubtegna(RegisterDto registerDto) {
         Equbtegna equbtegna = objectMapper.convertValue(registerDto.getPayload(), Equbtegna.class);
+        equbtegna.getAccount().setStatus("1");
         return ResponseEntity.ok(equbtegnasRepository.save(equbtegna));
 
     }

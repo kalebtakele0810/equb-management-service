@@ -24,7 +24,7 @@ public class EqubCategory {
     @Column(nullable = false)
     private Integer id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Column
@@ -36,13 +36,13 @@ public class EqubCategory {
     @Column(nullable = false)
     private String categoryRank;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String logo;
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String code;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "equb_category_id", referencedColumnName = "id", nullable = true)
-    private List<Equb> equbs;
+    /*  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+      @JoinColumn(name = "equb_category_id", referencedColumnName = "id", nullable = true)
+      private List<Equb> equbs;*/
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")
     private Date createdAt;

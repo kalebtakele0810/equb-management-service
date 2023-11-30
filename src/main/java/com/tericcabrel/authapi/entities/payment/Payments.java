@@ -1,6 +1,7 @@
 
 package com.tericcabrel.authapi.entities.payment;
 
+import com.tericcabrel.authapi.entities.equbtegna.Equbtegna;
 import com.tericcabrel.authapi.entities.equbtegna.GenderEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "payments")
 @Entity

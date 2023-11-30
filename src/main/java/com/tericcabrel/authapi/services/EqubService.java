@@ -3,24 +3,26 @@ package com.tericcabrel.authapi.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tericcabrel.authapi.dtos.RegisterDto;
 import com.tericcabrel.authapi.dtos.ResponseDto;
+import com.tericcabrel.authapi.dtos.equb.AddEqub;
 import com.tericcabrel.authapi.dtos.equb.AddEqubtegna;
 import com.tericcabrel.authapi.dtos.equbtegna.ViewEqubtegnaDto;
 import com.tericcabrel.authapi.entities.equb.Equb;
+import com.tericcabrel.authapi.entities.equb.EqubCategory;
+import com.tericcabrel.authapi.entities.equb.EqubType;
 import com.tericcabrel.authapi.entities.equb.StartEqub;
 import com.tericcabrel.authapi.entities.equbtegna.Equbtegna;
 import com.tericcabrel.authapi.entities.payment.ChannelEnum;
 import com.tericcabrel.authapi.entities.payment.PaymentStatusEnum;
 import com.tericcabrel.authapi.entities.payment.Payments;
+import com.tericcabrel.authapi.repositories.EqubCategoryRepository;
 import com.tericcabrel.authapi.repositories.EqubRepository;
+import com.tericcabrel.authapi.repositories.EqubTypeRepository;
 import com.tericcabrel.authapi.repositories.EqubtegnasRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -28,9 +30,30 @@ public class EqubService {
     private final EqubRepository equbRepository;
     private final EqubtegnasRepository equbtegnasRepository;
     private final ObjectMapper objectMapper;
+    private final EqubCategoryRepository equbCategoryRepository;
+    private final EqubTypeRepository equbTypeRepository;
 
     public ResponseEntity<Equb> addEqub(RegisterDto registerDto) {
-        Equb equb = objectMapper.convertValue(registerDto.getPayload(), Equb.class);
+
+        AddEqub addEqub = objectMapper.convertValue(registerDto.getPayload(), AddEqub.class);
+        EqubType equbType = equbTypeRepository.findById(Integer.valueOf(addEqub.getEqubType())).get();
+        EqubCategory equbCategory = equbCategoryRepository.findById(Integer.valueOf(addEqub.getEqubCategory())).get();
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(addEqub.getStarted_date());
+        cal.add(Calendar.DAY_OF_WEEK, addEqub.getRound() * equbType.getNumberOfDays());
+        Date endDate = cal.getTime();
+        Equb equb = Equb.builder()
+                .name(addEqub.getName())
+                .amount(addEqub.getAmount())
+                .round(addEqub.getRound())
+                .started_date(addEqub.getStarted_date())
+                .end_date(endDate)
+                .status("0")
+                .equbAgreement(addEqub.getEqubAgreement())
+                .equbType(equbType)
+                .equbCategory(equbCategory)
+                .build();
         return ResponseEntity.ok(equbRepository.save(equb));
     }
 
@@ -114,12 +137,42 @@ public class EqubService {
         );
     }
 
+  public ResponseEntity<ResponseDto> findEqubByJoinedId(ViewEqubtegnaDto viewEqubtegnaDto) {
+        return ResponseEntity.ok(
+                ResponseDto.builder()
+                        .requestRefID(viewEqubtegnaDto.getRequestRefID())
+                        .remark(viewEqubtegnaDto.getRemark())
+                        .payload(equbRepository.findByStartEqubs_Id(Integer.valueOf(viewEqubtegnaDto.getIdentifier())))
+                        .build()
+        );
+    }
+
     public ResponseEntity<ResponseDto> viewListEqubs(ViewEqubtegnaDto viewEqubtegnaDto) {
         return ResponseEntity.ok(
                 ResponseDto.builder()
                         .requestRefID(viewEqubtegnaDto.getRequestRefID())
                         .remark(viewEqubtegnaDto.getRemark())
                         .payload(equbRepository.findAll())
+                        .build()
+        );
+    }
+
+    public ResponseEntity<ResponseDto> viewListEqubsCategory(ViewEqubtegnaDto viewEqubtegnaDto) {
+        return ResponseEntity.ok(
+                ResponseDto.builder()
+                        .requestRefID(viewEqubtegnaDto.getRequestRefID())
+                        .remark(viewEqubtegnaDto.getRemark())
+                        .payload(equbCategoryRepository.findAll())
+                        .build()
+        );
+    }
+
+    public ResponseEntity<ResponseDto> viewListEqubsTypes(ViewEqubtegnaDto viewEqubtegnaDto) {
+        return ResponseEntity.ok(
+                ResponseDto.builder()
+                        .requestRefID(viewEqubtegnaDto.getRequestRefID())
+                        .remark(viewEqubtegnaDto.getRemark())
+                        .payload(equbTypeRepository.findAll())
                         .build()
         );
     }
